@@ -14,7 +14,7 @@ public class Escola {
     private String nome;
     private String endereco;
     private String sigla;
-    private Double nralunos;
+    private int nralunos;
     private Double area;
 
     public int getCodigo() {
@@ -49,11 +49,11 @@ public class Escola {
         this.sigla = sigla;
     }
 
-    public Double getNralunos() {
+    public int getNralunos() {
         return nralunos;
     }
 
-    public void setNralunos(Double nralunos) {
+    public void setNralunos(int nralunos) {
         this.nralunos = nralunos;
     }
 
@@ -69,5 +69,7 @@ public class Escola {
     public String toString() {
         return "Escola{" + "sigla=" + sigla + '}';
     }
+
+   
     
 }

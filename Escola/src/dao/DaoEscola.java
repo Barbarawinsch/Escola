@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import modelo.Escola;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -22,7 +25,40 @@ public class DaoEscola {
             ps.setString(2, objeto.getEndereco());
             ps.setString(3, objeto.getSigla());
             ps.setInt(4, objeto.getNralunos());
-            ps.setInt(5, objeto.getArea());
+            ps.setDouble(5, objeto.getArea());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
+        
+    }
+     public static void main(String[] args) {
+        Escola objeto = new Escola();
+        objeto.setNome("Instituto Federal");
+        objeto.setEndereco("Ibirubá");
+        objeto.setSigla("IFRS");
+        objeto.setNralunos(200);
+        objeto.setArea(5.2);
+        
+        boolean resultado = inserir(objeto);
+        if (resultado) {
+            JOptionPane.showMessageDialog(null, "Inserido com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro!");
+        }
+    }
+     public static boolean alterar(Escola objeto) {
+        String sql = "UPDATE escola SET nome = ?, endereco = ?, sigla = ?, nralunos = ?, area = ? WHERE codigo=?";
+        try {
+            PreparedStatement ps = conexao.Conexao.getConexao().prepareStatement(sql);
+            ps.setString(1, objeto.getNome()); 
+            ps.setString(2, objeto.getEndereco());
+            ps.setString(3, objeto.getSigla());
+            ps.setInt(4, objeto.getNralunos());
+            ps.setDouble(5, objeto.getArea());
+            ps.setInt(6, objeto.getCodigo());
             ps.executeUpdate();
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
@@ -30,4 +66,43 @@ public class DaoEscola {
             return false;
         }
     }
+     public static boolean excluir(Escola objeto) {
+        String sql = "DELETE FROM escola WHERE codigo=?";
+        try {
+            PreparedStatement ps = conexao.Conexao.getConexao().prepareStatement(sql);
+            ps.setInt(1, objeto.getCodigo());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
+     public static List<Escola> consultar() {
+        List<Escola> resultados = new ArrayList<>();
+        //editar o SQL conforme a entidade
+        String sql = "SELECT codigo, nome, endereco, sigla, nralunos, area FROM escola";
+        PreparedStatement ps;
+        try {
+            ps = conexao.Conexao.getConexao().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Escola objeto = new Escola();
+                //definir um set para cada atributo da entidade, cuidado com o tipo
+                objeto.setCodigo(rs.getInt("codigo"));
+                objeto.setNome(rs.getString("nome"));
+                objeto.setEndereco(rs.getString("endereco"));
+                objeto.setSigla(rs.getString("sigla"));
+                objeto.setNralunos(rs.getInt("nralunos"));
+                objeto.setArea(rs.getDouble("area"));
+                objeto.setCodigo(rs.getInt("codigo"));
+                
+                resultados.add(objeto);//não mexa nesse, ele adiciona o objeto na lista
+            }
+            return resultados;
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+}
 }
